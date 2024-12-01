@@ -27,6 +27,8 @@ URL = 'https://api.adviceslip.com/advice'
 
 fimPrograma = 'Não'
 continuar = ['Sim', 'sim', 'S', 's']
+way_conselhos = 'pasta_conselhos/conselhos.txt'
+conselhos_temporarios = []
 
 
 if __name__ == '__main__':
@@ -39,16 +41,17 @@ if __name__ == '__main__':
         print(f'\nO Que Voce Deseja Fazer?')
         print()
 
-        print(f'1. Ouvir Conselhos Arretados e Salvar')
+        print(f'1. Ouvir Conselhos Arretados')
         print(f'2. Mostrar Os Conselhos Já Salvos')
         print(f'3. Sair')
+        print(f'4. Guardar os conselhos')
         print()
 
         opcao = int(input('>> '))
 
         # PRIMEIRA OPÇÃO DO MENU - BUSCAR CONSELHOS E SALVAR COM ID, CONSELHO E
         if opcao == 1:
-            numConselhos = int(input('Digite A Quantidade de Conselhos Que Deseja Receber: '))
+            numConselhos = int(input('Digite a quantidade de conselhos que deseja receber: '))
             print()
 
             for i in range(numConselhos):
@@ -58,19 +61,18 @@ if __name__ == '__main__':
                 advice = consulta.json()['slip']['advice']
                 traducao = GoogleTranslator(source='english', target='portuguese').translate(advice)
 
-                sleep(2)
+                sleep(1)
                 print(f'{traducao}\n')
                 print('-='*110 + '\n')
-
-                with open('conselhos.txt', 'a', encoding='UTF-8') as arquivo:
-
-                    arquivo.write(f'{id} - {advice} - {traducao} \n')
 
         # SEGUNDA OPÇÃO DO MENU - MOSTRAR OS CONSELHOS SALVOS
         elif opcao == 2:
 
-            print('FALTA DESENVOLVER ESSA PARTE')
-
+            with open(way_conselhos, 'r', encoding="utf-8") as arquivo:
+                conteudo = arquivo.read()
+                
+            print(conteudo)
+                
         # TERCEIRA OPÇÃO DO MENU - SAIR DO PROGRAMA
         elif opcao == 3:
 
@@ -78,3 +80,7 @@ if __name__ == '__main__':
             sleep(1)
             print('Fim do Programa!')
             fimPrograma = 'Sim'
+
+        elif opcao == 4:
+            with open(f'conselhos.txt', 'a', encoding='UTF-8') as arquivo:
+                arquivo.write(f'{id} | {advice} | {traducao}\n')
