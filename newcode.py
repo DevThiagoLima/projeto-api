@@ -1,3 +1,21 @@
+# O sistema precisar ter um menu com as opções abaixo. Organize o menu como ficar mais fácil para o usuário.
+
+# Ouvir o Seu Zé: Perguntar quantos conselhos ele quer receber.
+
+# Mostrar os Conselhos: Exibir os conselhos mágicos da API na tela. >> a.Consumir a API.
+
+# Guardar a Sabedoria: Dar a opção de salvar os conselhos em um arquivo de texto, junto com o ID do conselho.
+
+# Mostrar os Conselhos guardados no arquivo de texto;
+
+# Traduzir para o "Gringo": Se o Seu Zé quiser alcançar clientes internacionais, traduzir os conselhos do inglês para português usando a API deep_translator com o GoogleTranslator.
+
+# Relembrar as Dicas: Permitir que o Seu Zé acesse os conselhos salvos e, se precisar, traduzi-los.
+# A. Opção de apenas traduzir o conselho da API;
+# B. Opção de traduzir o que estiver salvo no arquivo de texto;
+
+#-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- #
+
 from loguru import logger
 import requests
 from deep_translator import GoogleTranslator
