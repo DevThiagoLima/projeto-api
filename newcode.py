@@ -22,20 +22,63 @@ from deep_translator import GoogleTranslator
 from time import sleep
 
 URL = 'https://api.adviceslip.com/advice'
-way_conselhos = 'conselhos.txt'
+WAY_CONSELHOS = 'conselhos.txt'
 conselhos_temporarios = []
 
-if __name__ == '__main__':
-    fimPrograma = 'Não'
+def ouvir_conselhos():
+    num_conselhos = int(input('Digite a quantidade de conselhos que deseja receber: \n'))
+    for i in range(num_conselhos):
+        consulta = requests.get(URL).json()
+        id_conselho = consulta['slip']['id']
+        conselho = consulta['slip']['advice']
+        traducao_br = GoogleTranslator(source='english', target='portuguese').translate(conselho)
+        conselhos_temporarios.append((id_conselho, conselho, traducao_br))
+        print(f'Conselho {i + 1}: {traducao_br}', '-' * 120)
+        sleep(1)
 
-    while fimPrograma == 'Não':
-        print("\nSeja Bem-vindo Ao Nosso Programa de Conselhos!!\n")
-        print("1. Ouvir Conselhos Arretados")
-        print("2. Mostrar Os Conselhos Já Salvos")
-        print("3. Guardar os Conselhos")
-        print("4. Traduzir para o Gringo")
-        print("5. Sair\n")
+def mostrar_conselhos_salvos():
+    try:
+        with open(WAY_CONSELHOS, 'r', encoding="utf-8") as arquivo:
+            print(arquivo.read())
+    except FileNotFoundError:
+        print("Nenhum conselho foi salvo ainda.")
 
+def guardar_conselhos():
+    if conselhos_temporarios:
+        with open(WAY_CONSELHOS, 'a', encoding='utf-8') as arquivo:
+            for id_conselho, conselho, traducao_br in conselhos_temporarios:
+                arquivo.write(f'{id_conselho} - {traducao_br}\n')
+        print("Conselhos salvos com sucesso!")
+        conselhos_temporarios.clear()
+    else:
+        print("Nenhum conselho para salvar.")
+
+def traduzir_para_gringo():
+    try:
+        with open(WAY_CONSELHOS, "r", encoding="utf-8") as arquivo:
+            conselhos_traduzidos = [
+                GoogleTranslator(source='portuguese', target='english').translate(linha.strip())
+                for linha in arquivo.readlines()
+            ]
+        print("\nConselhos traduzidos para o inglês:\n")
+        for i, traducao in enumerate(conselhos_traduzidos, start=1):
+            print(f"Conselho {i}: {traducao}")
+    except FileNotFoundError:
+        print("Nenhum conselho foi salvo ainda. O arquivo não existe.")
+
+def menu():
+    print("\nSeja Bem-vindo Ao Nosso Programa de Conselhos!!\n")
+    print("1. Ouvir Conselhos Arretados")
+    print("2. Mostrar Os Conselhos Já Salvos")
+    print("3. Guardar os Conselhos")
+    print("4. Traduzir para o Gringo")
+    print("5. Sair\n")
+
+def main():
+    fim_programa = 'Não'
+
+    while fim_programa == 'Não':
+        menu()
         try:
             opcao = int(input('>> '))
         except ValueError:
@@ -44,50 +87,19 @@ if __name__ == '__main__':
 
         match opcao:
             case 1:
-                numConselhos = int(input('Digite a quantidade de conselhos que deseja receber: \n'))
-                for i in range(numConselhos):
-                    consulta = requests.get(URL).json()
-                    id = consulta['slip']['id']
-                    advice = consulta['slip']['advice']
-                    traducao_br = GoogleTranslator(source='english', target='portuguese').translate(advice)
-                    conselhos_temporarios.append((id, advice, traducao_br))
-                    print(f'Conselho {i + 1}: {traducao_br}', '-' * 120)
-                    sleep(1)
-
+                ouvir_conselhos()
             case 2:
-                try:
-                    with open(way_conselhos, 'r', encoding="utf-8") as arquivo:
-                        print(arquivo.read())
-                except FileNotFoundError:
-                    print("Nenhum conselho foi salvo ainda.")
-
+                mostrar_conselhos_salvos()
             case 3:
-                if conselhos_temporarios:
-                    with open(way_conselhos, 'a', encoding='utf-8') as arquivo:
-                        for id, advice, traducao_br in conselhos_temporarios:
-                            arquivo.write(f'{id} - {traducao_br}\n')
-                    print("Conselhos salvos com sucesso!")
-                    conselhos_temporarios.clear()
-                else:
-                    print("Nenhum conselho para salvar.")
-
+                guardar_conselhos()
             case 4:
-                try:
-                    with open(way_conselhos, "r", encoding="utf-8") as arquivo:
-                        conselhos_traduzidos = [
-                            GoogleTranslator(source='portuguese', target='english').translate(linha.strip())
-                            for linha in arquivo.readlines()
-                        ]
-                    print("\nConselhos traduzidos para o inglês:\n")
-                    for i, traducao in enumerate(conselhos_traduzidos, start=1):
-                        print(f"Conselho {i}: {traducao}")
-                except FileNotFoundError:
-                    print("Nenhum conselho foi salvo ainda. O arquivo não existe.")
-
+                traduzir_para_gringo()
             case 5:
                 print('Saindo do Programa...')
                 sleep(1)
-                fimPrograma = 'Sim'
-
+                fim_programa = 'Sim'
             case _:
                 print("Opção inválida. Digite um número entre 1 e 5.")
+
+if __name__ == '__main__':
+    main()
